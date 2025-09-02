@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PrazskaLitacka.Domain.Entities;
 
 namespace PrazskaLitacka.Domain.Interfaces;
-internal interface IStationLineRepository
+public interface IStationLineRepository
 {
+    Task<StationLine?> GetById(int id);
+    Task<List<StationLine>> GetByBeginningOfName(string name);
 }

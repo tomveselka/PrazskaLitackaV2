@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PrazskaLitacka.Domain.Entities;
 
 namespace PrazskaLitacka.Domain.Interfaces;
-internal interface IRowRepository
+public interface IRowRepository
 {
+    Task<Row?> GetById(int id);
+
 }

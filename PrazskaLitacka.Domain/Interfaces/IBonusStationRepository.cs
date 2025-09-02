@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PrazskaLitacka.Domain.Entities;
 
 namespace PrazskaLitacka.Domain.Interfaces;
-internal interface IBonusStationRepository
+public interface IBonusStationRepository
 {
+    Task<BonusStation?> GetById(int id);
+    Task Add(BonusStation e);
+    Task Update(BonusStation e);
+    Task Delete(int id);
 }
