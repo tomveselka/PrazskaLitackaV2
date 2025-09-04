@@ -12,6 +12,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\PrazskaLitacka.Domain\PrazskaLitacka.Domain.csproj" />
+		<ProjectReference Include="..\PrazskaLitacka.Domain\PrazskaLitacka.Webapi" />
 	</ItemGroup>
 
 </Project>

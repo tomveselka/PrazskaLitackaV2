@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PrazskaLitacka.Domain.DbContexts;
 using PrazskaLitacka.Domain.Entities;
+using PrazskaLitacka.Domain.Interfaces;
 
 namespace PrazskaLitacka.Infrastructure.Persistence;
-public class RaceEntryRepository
+public class RaceEntryRepository : IRaceEntryRepository
 {
     private readonly ApplicationDbContext _db;
     public RaceEntryRepository(ApplicationDbContext db) => _db = db;

@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 using PrazskaLitacka.Domain.Entities;
 
 namespace PrazskaLitacka.Domain.Interfaces;
-public interface IBonusStationRepository
+public interface IRaceEntryRepository
 {
-    Task<BonusStation?> GetById(int id);
-    Task<List<BonusStation>> GetAll();
-    Task Add(BonusStation e);
-    Task Update(BonusStation e);
+    Task<RaceEntry?> GetById(int id);
+    Task Add(RaceEntry entry);
+    Task Update(RaceEntry entry);
     Task Delete(int id);
 }

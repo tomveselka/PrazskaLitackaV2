@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PrazskaLitacka.Domain.DbContexts;
 using PrazskaLitacka.Domain.Entities;
+using PrazskaLitacka.Domain.Interfaces;
 
 namespace PrazskaLitacka.Infrastructure.Persistence;
-public class StationRepository
+public class StationRepository : IStationRepository
 {
     private readonly ApplicationDbContext _db;
     public StationRepository(ApplicationDbContext db) => _db = db;

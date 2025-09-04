@@ -9,6 +9,7 @@ namespace PrazskaLitacka.Domain.Interfaces;
 public interface IBonusLineRepository
 {
     Task<BonusLine?> GetById(int id);
+    Task <List<BonusLine>> GetAll();
     Task Add(BonusLine e);
     Task Update(BonusLine e);
     Task Delete(int id);
