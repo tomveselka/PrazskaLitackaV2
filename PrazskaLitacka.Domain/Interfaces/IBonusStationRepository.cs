@@ -9,7 +9,7 @@ namespace PrazskaLitacka.Domain.Interfaces;
 public interface IBonusStationRepository
 {
     Task<BonusStation?> GetById(int id);
-    Task<List<BonusStation>> GetAll();
+    Task<List<BonusStation>> GetAllForRace(int raceId);
     Task Add(BonusStation e);
     Task Update(BonusStation e);
     Task Delete(int id);

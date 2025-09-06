@@ -5,5 +5,5 @@ namespace PrazskaLitacka.Webapi.Requests;
 
 public class StationRequests
 {
-    public record GetBonusStationsLinesQuery() : IRequest<BonusesDto>;
+    public record GetBonusStationsLinesQuery(int raceId) : IRequest<BonusesDto>;
 }
