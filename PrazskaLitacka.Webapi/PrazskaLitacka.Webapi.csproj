@@ -11,13 +11,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\PrazskaLitacka.Domain\PrazskaLitacka.Domain.csproj" />
-		<ProjectReference Include="..\PrazskaLitacka.Domain\PrazskaLitacka.Webapi.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -18,9 +18,9 @@ public class StationController : ControllerBase
     }
 
     [HttpGet("GetBonusStationsAndLines")]
-    public async Task<ActionResult<BonusesDto>> GetBonusStationsAndLines()
+    public async Task<ActionResult<BonusesDto>> GetBonusStationsAndLines([FromQuery] string raceId)
     {
-        var result = await _mediator.Send(new GetBonusStationsLinesQuery());
+        var result = await _mediator.Send(new GetBonusStationsLinesQuery(int.Parse(raceId)));
         return Ok(result);
     }
 }
