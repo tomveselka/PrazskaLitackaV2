@@ -7,8 +7,6 @@ namespace PrazskaLitacka.Domain.Entities
         [Key] 
         public int Id { get; set; }
         [Required] 
-        public string StationId { get; set; } = null!;
-        [Required] 
         public string Name { get; set; } = null!;
         [Required] 
         public float AvgLat { get; set; }

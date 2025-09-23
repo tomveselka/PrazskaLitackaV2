@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrazskaLitacka.Webapi", "PrazskaLitacka.Webapi\PrazskaLitacka.Webapi.csproj", "{378D4A46-951A-478D-97C0-59D61B1E7BE3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrazskaLitacka.Domain", "PrazskaLitacka.Domain\PrazskaLitacka.Domain.csproj", "{8D4C7BFB-7F39-4F7B-8726-9093ECC27BEF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrazskaLitacka.Infrastructure", "PrazskaLitacka.Infrastructure\PrazskaLitacka.Infrastructure.csproj", "{BA3E69CE-8D1B-4A90-8C29-0E0E3718A053}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrazskaLitacka.Infrastructure.Tests", "PrazskaLitacka.Infrastructure.Tests\PrazskaLitacka.Infrastructure.Tests.csproj", "{9A36A196-12B3-4C3D-AC1A-0B1DFABE552D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{BA3E69CE-8D1B-4A90-8C29-0E0E3718A053}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA3E69CE-8D1B-4A90-8C29-0E0E3718A053}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA3E69CE-8D1B-4A90-8C29-0E0E3718A053}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A36A196-12B3-4C3D-AC1A-0B1DFABE552D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A36A196-12B3-4C3D-AC1A-0B1DFABE552D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A36A196-12B3-4C3D-AC1A-0B1DFABE552D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A36A196-12B3-4C3D-AC1A-0B1DFABE552D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

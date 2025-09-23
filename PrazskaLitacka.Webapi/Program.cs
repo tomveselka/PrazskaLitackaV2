@@ -11,7 +11,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient("XmlDataClient", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["XmlDataClient:BaseUrl"]);
+    client.BaseAddress = new Uri(builder.Configuration["XmlDataClient:BaseUrl"]!);
 });
 
 var app = builder.Build();
