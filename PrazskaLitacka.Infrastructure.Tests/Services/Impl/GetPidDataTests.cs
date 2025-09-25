@@ -2,7 +2,6 @@
 using Xunit;
 using Microsoft.Extensions.Logging;
 using PrazskaLitacka.Infrastructure.Services.Impl;
-using PrazskaLitacka.Webapi.XmlModels;
 using Moq.Protected;
 using System.Net;
 using System.Text;
@@ -13,6 +12,7 @@ public class GetPidDataTests
 {
     private readonly Mock<ILogger<GetPidDataService>> _loggerMock;
     private readonly Mock<IHttpClientFactory> _factoryMock;
+    private readonly Mock<HttpMessageHandler> _handlerMock;
     private readonly HttpClient _httpClient;
 
     private readonly GetPidDataService _getPidData;
@@ -21,8 +21,8 @@ public class GetPidDataTests
         _loggerMock = new Mock<ILogger<GetPidDataService>>();
         _factoryMock = new Mock<IHttpClientFactory>();
 
-        var handlerMock = new Mock<HttpMessageHandler>();
-        handlerMock.Protected()
+        _handlerMock = new Mock<HttpMessageHandler>();
+        _handlerMock.Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.IsAny<HttpRequestMessage>(),
@@ -33,13 +33,13 @@ public class GetPidDataTests
                 Content = xmlResponse
             });
 
-        var fakeClient = new HttpClient(handlerMock.Object)
+        _httpClient = new HttpClient(_handlerMock.Object)
         {
             BaseAddress = new Uri("https://data.pid.cz/stops/xml/StopsByName.xsd")
         };
 
         _factoryMock.Setup(f => f.CreateClient("XmlDataClient"))
-                   .Returns(fakeClient);
+                   .Returns(_httpClient);
 
         _getPidData = new GetPidDataService(_factoryMock.Object, _loggerMock.Object);
     }
@@ -52,13 +52,179 @@ public class GetPidDataTests
 
         //Assert
         Assert.IsType<Stops>(stops);
+        Assert.Equal(3, stops.Groups.Count);
+
+        _handlerMock.Protected().Verify(
+        "SendAsync",
+        Times.Once(),
+        ItExpr.Is<HttpRequestMessage>(req =>
+            req.Method == HttpMethod.Get  // method check
+            && req.RequestUri == _httpClient.BaseAddress), // URL check
+        ItExpr.IsAny<CancellationToken>()
+        );
     }
 
     [Fact]
     public void GetDataForDbInserts_ShouldReturnDto_WhenStopsObjectContainsData()
     {
+        //Act
+        var stationList = _getPidData.GetDataForDbInserts(stops);
 
+        //Assert
+        Assert.Equal(2, stationList.Count);
+        Assert.Equal(2, stationList[0].Lines.Count);
+        Assert.Equal(3, stationList[1].Lines.Count);
+        Assert.Equal("UniqueName1", stationList[0].Name);
+        Assert.Equal("UniqueName2", stationList[1].Name);
+        Assert.Equal("8", stationList[0].Zones);
+        Assert.Equal("P,B,0,1", stationList[1].Zones);
     }
+
+    Stops stops = new Stops()
+    {
+        DataFormatVersion = "1",
+        GeneratedAt = DateTime.UtcNow,
+        Groups = new List<Group>()
+            {
+                new Group()
+                {
+                    Name = "Name1",
+                    DistrictCode = "DistCode1",
+                    IdosCategory = 1,
+                    IdosName = "IdosName1",
+                    FullName = "FullName1",
+                    UniqueName = "UniqueName1",
+                    Node = 1,
+                    Cis= 1,
+                    AvgLat = 50.1F,
+                    AvgLon = 15.0F,
+                    AvgJtskX = -60000F,
+                    AvgJtskY = -1000000F,
+                    Municipality = "Mun1",
+                    Stops = new List<Stop>()
+                    {
+                        new Stop()
+                        {
+                            Id = "Stop1/1",
+                            Platform = "1",
+                            AltIdosName = "AltIdosName",
+                            Lat = 49.8581047F,
+                            Lon = 15.4081345F,
+                            JtskX = -675931.563F,
+                            JtskY = -1077494.13F,
+                            Zone = "8",
+                            WheelchairAccess = WheelchairAccessType.unknown,
+                            GtfsIds = "U7288Z1",
+                            Lines = new List<Line>()
+                            {
+                                new Line()
+                                {
+                                    Id=740,
+                                    Name="740",
+                                    Type=TrafficType.bus,
+                                    Direction="Okřesaneč",
+                                    Direction2="Golčův Jeníkov,nám.TGM"
+                                },
+                                new Line()
+                                {
+                                    Id=740,
+                                    Name="740",
+                                    Type=TrafficType.bus,
+                                    Direction="Čáslav,žel.st."
+                                },
+                                new Line()
+                                {
+                                    Id=741,
+                                    Name="741",
+                                    Type=TrafficType.bus,
+                                    Direction="Čáslav,žel.st."
+                                }
+                            }
+                        }
+                    }
+                },
+                new Group()
+                {
+                    Name = "Name2",
+                    DistrictCode = "DistCode2",
+                    IdosCategory = 1,
+                    IdosName = "IdosName2",
+                    FullName = "FullName2",
+                    UniqueName = "UniqueName2",
+                    Node = 1,
+                    Cis= 1,
+                    AvgLat = 50.1F,
+                    AvgLon = 15.0F,
+                    AvgJtskX = -60000F,
+                    AvgJtskY = -1000000F,
+                    Municipality = "Mun2",
+                    Stops = new List<Stop>()
+                    {
+                        new Stop()
+                        {
+                            Id = "Stop2/1",
+                            Platform = "1",
+                            AltIdosName = "AltIdosName2.1",
+                            Lat = 49.8581047F,
+                            Lon = 15.4081345F,
+                            JtskX = -675931.563F,
+                            JtskY = -1077494.13F,
+                            Zone = "P,B,1",
+                            WheelchairAccess = WheelchairAccessType.unknown,
+                            GtfsIds = "U7288Z1",
+                            Lines = new List<Line>()
+                            {
+                                new Line()
+                                {
+                                    Id=15,
+                                    Name="15",
+                                    Type=TrafficType.tram,
+                                    Direction="Okřesaneč",
+                                    Direction2="Golčův Jeníkov,nám.TGM"
+                                },
+                                new Line()
+                                {
+                                    Id=16,
+                                    Name="16",
+                                    Type=TrafficType.tram,
+                                    Direction="Čáslav,žel.st."
+                                }
+                            }
+                        },
+                        new Stop()
+                        {
+                            Id = "Stop2/2",
+                            Platform = "2",
+                            AltIdosName = "AltIdosName2.2",
+                            Lat = 49.8581047F,
+                            Lon = 15.4081345F,
+                            JtskX = -675931.563F,
+                            JtskY = -1077494.13F,
+                            Zone = "B,0",
+                            WheelchairAccess = WheelchairAccessType.unknown,
+                            GtfsIds = "U7288Z1",
+                            Lines = new List<Line>()
+                            {
+                                new Line()
+                                {
+                                    Id=19,
+                                    Name="19",
+                                    Type=TrafficType.tram,
+                                    Direction="Okřesaneč",
+                                    Direction2="Golčův Jeníkov,nám.TGM"
+                                },
+                                new Line()
+                                {
+                                    Id=16,
+                                    Name="16",
+                                    Type=TrafficType.tram,
+                                    Direction="Čáslav,žel.st."
+                                }
+                            }
+                        }
+                    } }
+            }
+    };
 
     StringContent xmlResponse = new StringContent(
     @"<stops xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" generatedAt=""2025-09-23T03:52:25"" dataFormatVersion=""3"">

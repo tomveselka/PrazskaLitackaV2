@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using prazska_litacka.webapi;
 using System.Xml.Serialization;
 using PrazskaLitacka.Webapi.Interfaces;
 using PrazskaLitacka.Infrastructure.Exceptions;
-using PrazskaLitacka.Webapi.XmlModels;
 using PrazskaLitacka.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
@@ -40,12 +38,13 @@ public class GetPidDataService : IGetPidDataService
         {
             throw new StopsNotRetrievedException();
         }
+        _logger.LogInformation("Successfully serialised XML into Stops object with {0} stations", stops.Groups.Count);
         return stops;
     }
 
-    public PidDataDto GetDataForDbInserts(Stops stopList)
+    public List<Station> GetDataForDbInserts(Stops stopList)
     {
-        PidDataDto pidData = new PidDataDto();
+        List<Station> stationList = new List<Station>();
         var stopGroups = stopList.Groups;
         foreach (var stopGroup in stopGroups) 
         {
@@ -67,7 +66,7 @@ public class GetPidDataService : IGetPidDataService
                     };
                     lines.Add(stationLine);                    
                 }
-                zones.Append(stop.Zone);
+                zones.Append(stop.Zone).Append(","); ;
             }
             var uniqueLinesList = lines
                 .GroupBy(x => x.Name)
@@ -78,12 +77,30 @@ public class GetPidDataService : IGetPidDataService
             var uniqueZonesList = zones
                 .ToString()
                 .Split(',')
+                .Where(z => !string.IsNullOrWhiteSpace(z))
                 .Distinct()
-                .ToList();                
-            station.Zones = string.Join(",", uniqueZonesList);
+                .ToList();
+            station.Zones = SortZones(uniqueZonesList);
+            stationList.Add(station);
         }
 
-        return pidData;
+        _logger.LogInformation("Successfully created list of stations for DB insert. Number of stations: {0}", stationList.Count);
+
+        return stationList;
+    }
+
+    private string SortZones(List<string> zones)
+    {
+        var sortedList =
+        from x in zones
+        orderby
+            x == "P" ? 0 :
+            x == "B" ? 1 :
+            2,                       
+            x == "P" || x == "B" ? 0 : int.Parse(x)
+        select x;
+
+        return string.Join(",", sortedList);
     }
 }
 
