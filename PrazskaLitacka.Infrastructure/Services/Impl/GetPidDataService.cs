@@ -10,16 +10,23 @@ using PrazskaLitacka.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using PidStops.Models;
+using Microsoft.EntityFrameworkCore;
+using PrazskaLitacka.Domain.DbContexts;
+using PrazskaLitacka.Domain.Interfaces;
 
 namespace PrazskaLitacka.Infrastructure.Services.Impl;
 public class GetPidDataService : IGetPidDataService
 {
     private readonly HttpClient _httpClient;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ITechnicalVariablesRepository _variablesRepository;
+    private readonly ApplicationDbContext _dbContext;
     private readonly ILogger<GetPidDataService> _logger;
 
-    public GetPidDataService(IHttpClientFactory factory, ILogger<GetPidDataService> logger)
+    public GetPidDataService(IHttpClientFactory factory, ApplicationDbContext dbContext, ITechnicalVariablesRepository variablesRepository, ILogger<GetPidDataService> logger)
     {
+        _dbContext = dbContext;
+        _variablesRepository = variablesRepository;
         _httpClientFactory = factory;
         _httpClient = _httpClientFactory.CreateClient("XmlDataClient");
         _logger = logger;
@@ -101,6 +108,35 @@ public class GetPidDataService : IGetPidDataService
         select x;
 
         return string.Join(",", sortedList);
+    }
+
+    public async Task UpdateTables(List<Station> newStations)
+    {
+        using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+        try
+        {
+            // Clear dependent table first (StationLines), then Stations
+            _dbContext.Stations.RemoveRange(_dbContext.Stations);
+            _dbContext.StationLines.RemoveRange(_dbContext.StationLines);
+
+            await _dbContext.SaveChangesAsync();
+
+            // Insert new data
+            await _dbContext.Stations.AddRangeAsync(newStations);
+            await _dbContext.SaveChangesAsync();
+
+            var variables = await _variablesRepository.GetAll();
+            variables.TimeOfLastStationUpdate = DateTime.UtcNow;
+            await _variablesRepository.Update(variables);
+
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 }
 

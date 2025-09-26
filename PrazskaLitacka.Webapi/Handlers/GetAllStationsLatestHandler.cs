@@ -9,19 +9,29 @@ namespace PrazskaLitacka.Webapi.Handlers;
 
 public class GetAllStationsLatestHandler : IRequestHandler<GetAllStationsLatestHandlerQuery, List<Station>>
 {
-    private readonly IStationRepository _stationRepository;
+    private readonly ITechnicalVariablesRepository _variablesRepository;
     private readonly IGetPidDataService _pidDataService;
     private readonly ILogger<GetAllStationsLatestHandler> _logger;
 
-    public GetAllStationsLatestHandler(IStationRepository stationRepository, IGetPidDataService pidDataService, ILogger<GetAllStationsLatestHandler> logger)
+    public GetAllStationsLatestHandler(ITechnicalVariablesRepository variablesRepository, IGetPidDataService pidDataService, ILogger<GetAllStationsLatestHandler> logger)
     {
-        _stationRepository = stationRepository;
+        _variablesRepository = variablesRepository;
         _pidDataService = pidDataService;
         _logger = logger;
     }
 
-    public Task<List<Station>> Handle(GetAllStationsLatestHandlerQuery request, CancellationToken cancellationToken)
+    public async Task<List<Station>> Handle(GetAllStationsLatestHandlerQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var stops = await _pidDataService.GetStationXmlAsync();
+        var stationsList = _pidDataService.GetDataForDbInserts(stops);
+        var techVariables = await _variablesRepository.GetAll();
+        DateTime datetimeOfLastUpdate = techVariables.TimeOfLastStationUpdate;
+
+        if (request.enforceUpdate || (DateTime.Now - datetimeOfLastUpdate).TotalHours > 24)
+        {
+            await _pidDataService.UpdateTables(stationsList);
+        }
+
+        return stationsList;
     }
 }

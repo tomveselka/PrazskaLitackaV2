@@ -7,5 +7,5 @@ namespace PrazskaLitacka.Webapi.Requests;
 public class StationRequests
 {
     public record GetBonusStationsLinesQuery(int raceId) : IRequest<BonusesDto>;
-    public record GetAllStationsLatestHandlerQuery(bool newXmlRequest) :IRequest<List<Station>>;
+    public record GetAllStationsLatestHandlerQuery(bool enforceUpdate) :IRequest<List<Station>>;
 }

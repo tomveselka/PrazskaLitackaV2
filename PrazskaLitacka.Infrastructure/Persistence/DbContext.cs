@@ -16,6 +16,7 @@ namespace PrazskaLitacka.Domain.DbContexts
         public DbSet<Station> Stations => Set<Station>();
         public DbSet<StationLine> StationLines => Set<StationLine>();
         public DbSet<User> Users => Set<User>();
+        public DbSet<TechnicalVariables> TechnicalVariables => Set<TechnicalVariables>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
