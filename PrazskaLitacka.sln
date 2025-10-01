@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrazskaLitacka.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrazskaLitacka.Infrastructure.Tests", "PrazskaLitacka.Infrastructure.Tests\PrazskaLitacka.Infrastructure.Tests.csproj", "{9A36A196-12B3-4C3D-AC1A-0B1DFABE552D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrazskaLitacka.WebApi.Tests", "PrazskaLitacka.WebApi.Tests\PrazskaLitacka.WebApi.Tests.csproj", "{19370336-635A-4E47-B733-BE742265A6AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{9A36A196-12B3-4C3D-AC1A-0B1DFABE552D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A36A196-12B3-4C3D-AC1A-0B1DFABE552D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A36A196-12B3-4C3D-AC1A-0B1DFABE552D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19370336-635A-4E47-B733-BE742265A6AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19370336-635A-4E47-B733-BE742265A6AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19370336-635A-4E47-B733-BE742265A6AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19370336-635A-4E47-B733-BE742265A6AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

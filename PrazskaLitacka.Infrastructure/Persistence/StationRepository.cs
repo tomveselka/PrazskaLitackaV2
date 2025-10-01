@@ -17,5 +17,32 @@ public class StationRepository : IStationRepository
     public Task<List<Station>> GetByBeginningOfName(string name) => _db.Stations.Where(s => s.Name.StartsWith(name)).ToListAsync();
     public Task<List<Station>> GetAll() => _db.Stations.Include(s => s.Lines).ToListAsync();
 
+    public async Task DropAllUploadNew(IEnumerable<Station> stationList)
+    {
+        using var transaction = await _db.Database.BeginTransactionAsync();
+
+        try
+        {
+            //TODO - move this to repositories so it is easier to mock
+            // Clear dependent table first (StationLines), then Stations
+            await _db.Stations.ExecuteDeleteAsync();
+            await _db.StationLines.ExecuteDeleteAsync();
+
+            await _db.SaveChangesAsync();
+
+            // Insert new data
+            await _db.Stations.AddRangeAsync(stationList);
+            await _db.SaveChangesAsync();
+
+            var technicalVariables = await _db.TechnicalVariables.FirstAsync();
+            technicalVariables.TimeOfLastStationUpdate = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
 }
 

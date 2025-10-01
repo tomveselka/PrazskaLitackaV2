@@ -19,14 +19,12 @@ public class GetPidDataService : IGetPidDataService
 {
     private readonly HttpClient _httpClient;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ITechnicalVariablesRepository _variablesRepository;
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IStationRepository _stationRepository;
     private readonly ILogger<GetPidDataService> _logger;
 
-    public GetPidDataService(IHttpClientFactory factory, ApplicationDbContext dbContext, ITechnicalVariablesRepository variablesRepository, ILogger<GetPidDataService> logger)
+    public GetPidDataService(IHttpClientFactory factory, IStationRepository stationRepository, ILogger<GetPidDataService> logger)
     {
-        _dbContext = dbContext;
-        _variablesRepository = variablesRepository;
+        _stationRepository = stationRepository;
         _httpClientFactory = factory;
         _httpClient = _httpClientFactory.CreateClient("XmlDataClient");
         _logger = logger;
@@ -36,7 +34,7 @@ public class GetPidDataService : IGetPidDataService
     {
         var response = await _httpClient.GetAsync(_httpClient.BaseAddress, CancellationToken.None);
         response.EnsureSuccessStatusCode();
-        _logger.LogInformation("Retrieved XML from PID Data");
+        _logger.LogInformation("PID-DATA-DOWNLOAD-SUCCESS Retrieved XML from PID Data");
         await using var stream = await response.Content.ReadAsStreamAsync();
         var serializer = new XmlSerializer(typeof(Stops));
         var stops = (Stops?)serializer.Deserialize(stream);
@@ -45,7 +43,7 @@ public class GetPidDataService : IGetPidDataService
         {
             throw new StopsNotRetrievedException();
         }
-        _logger.LogInformation("Successfully serialised XML into Stops object with {0} stations", stops.Groups.Count);
+        _logger.LogInformation("PID-DATA-PARSE-SUCCESS Successfully serialised XML into Stops object with {stopCount} stations", stops.Groups.Count);
         return stops;
     }
 
@@ -91,7 +89,7 @@ public class GetPidDataService : IGetPidDataService
             stationList.Add(station);
         }
 
-        _logger.LogInformation("Successfully created list of stations for DB insert. Number of stations: {0}", stationList.Count);
+        _logger.LogInformation("PID-DATA-CREATION-SUCCESS Successfully created list of stations for DB insert. Number of stations: {stationCount}", stationList.Count);
 
         return stationList;
     }
@@ -112,30 +110,14 @@ public class GetPidDataService : IGetPidDataService
 
     public async Task UpdateTables(List<Station> newStations)
     {
-        using var transaction = await _dbContext.Database.BeginTransactionAsync();
-
         try
         {
-            // Clear dependent table first (StationLines), then Stations
-            _dbContext.Stations.RemoveRange(_dbContext.Stations);
-            _dbContext.StationLines.RemoveRange(_dbContext.StationLines);
-
-            await _dbContext.SaveChangesAsync();
-
-            // Insert new data
-            await _dbContext.Stations.AddRangeAsync(newStations);
-            await _dbContext.SaveChangesAsync();
-
-            var variables = await _variablesRepository.GetAll();
-            variables.TimeOfLastStationUpdate = DateTime.UtcNow;
-            await _variablesRepository.Update(variables);
-
-            await transaction.CommitAsync();
+            await _stationRepository.DropAllUploadNew(newStations);
+            _logger.LogInformation("PID-DATA-UPDATE-SUCCESS Successfully updated tables of stations and lines");
         }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
+        catch (Exception ex) 
+        { 
+            _logger.LogError("PID-DATA-UPDATE-FAILURE Failed to update tables of stations and lines, ex: {exeption}", ex);
         }
     }
 }

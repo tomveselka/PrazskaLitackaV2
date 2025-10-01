@@ -11,4 +11,5 @@ public interface IStationRepository
     Task<Station?> GetById(int id);
     Task<List<Station>> GetByBeginningOfName(string name);
     Task<List<Station>> GetAll();
+    public Task DropAllUploadNew(IEnumerable<Station> stationList);
 }

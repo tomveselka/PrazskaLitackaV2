@@ -1,26 +1,29 @@
-﻿using Moq;
-using Xunit;
-using Microsoft.Extensions.Logging;
-using PrazskaLitacka.Infrastructure.Services.Impl;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
 using Moq.Protected;
+using PidStops.Models;
+using PrazskaLitacka.Domain.Interfaces;
+using PrazskaLitacka.Infrastructure.Services.Impl;
+using PrazskaLitacka.Infrastructure.Tests.Extensions;
 using System.Net;
 using System.Text;
-using PidStops.Models;
+using Xunit;
 
 namespace PrazskaLitacka.Infrastructure.Tests.Services.Impl;
-public class GetPidDataTests
+public class GetPidDataServiceTests
 {
     private readonly Mock<ILogger<GetPidDataService>> _loggerMock;
     private readonly Mock<IHttpClientFactory> _factoryMock;
     private readonly Mock<HttpMessageHandler> _handlerMock;
+    private readonly Mock<IStationRepository> _stationRepositoryMock;
     private readonly HttpClient _httpClient;
 
     private readonly GetPidDataService _getPidData;
-    public GetPidDataTests()
+    public GetPidDataServiceTests()
     {
         _loggerMock = new Mock<ILogger<GetPidDataService>>();
         _factoryMock = new Mock<IHttpClientFactory>();
-
+        _stationRepositoryMock = new Mock<IStationRepository>();
         _handlerMock = new Mock<HttpMessageHandler>();
         _handlerMock.Protected()
             .Setup<Task<HttpResponseMessage>>(
@@ -41,7 +44,7 @@ public class GetPidDataTests
         _factoryMock.Setup(f => f.CreateClient("XmlDataClient"))
                    .Returns(_httpClient);
 
-        _getPidData = new GetPidDataService(_factoryMock.Object, _loggerMock.Object);
+        _getPidData = new GetPidDataService(_factoryMock.Object, _stationRepositoryMock.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -55,17 +58,27 @@ public class GetPidDataTests
         Assert.Equal(3, stops.Groups.Count);
 
         _handlerMock.Protected().Verify(
-        "SendAsync",
-        Times.Once(),
-        ItExpr.Is<HttpRequestMessage>(req =>
-            req.Method == HttpMethod.Get  // method check
-            && req.RequestUri == _httpClient.BaseAddress), // URL check
-        ItExpr.IsAny<CancellationToken>()
+            "SendAsync",
+            Times.Once(),
+            ItExpr.Is<HttpRequestMessage>(req =>
+                req.Method == HttpMethod.Get
+                && req.RequestUri == _httpClient.BaseAddress),
+            ItExpr.IsAny<CancellationToken>()
         );
+        _loggerMock.VerifyLogStartsWith(
+            LogLevel.Information,
+            "PID-DATA-DOWNLOAD-SUCCESS",
+            Times.Once()
+        );
+        _loggerMock.VerifyLogStartsWith(
+           LogLevel.Information,
+           "PID-DATA-PARSE-SUCCESS",
+           Times.Once()
+       );
     }
 
     [Fact]
-    public void GetDataForDbInserts_ShouldReturnDto_WhenStopsObjectContainsData()
+    public void GetDataForDbInserts_ShouldReturnList_WhenStopsObjectContainsData()
     {
         //Act
         var stationList = _getPidData.GetDataForDbInserts(stops);
@@ -78,9 +91,14 @@ public class GetPidDataTests
         Assert.Equal("UniqueName2", stationList[1].Name);
         Assert.Equal("8", stationList[0].Zones);
         Assert.Equal("P,B,0,1", stationList[1].Zones);
+        _loggerMock.VerifyLogStartsWith(
+           LogLevel.Information,
+           "PID-DATA-CREATION-SUCCESS",
+           Times.Once()
+       );
     }
 
-    Stops stops = new Stops()
+    private readonly Stops stops = new Stops()
     {
         DataFormatVersion = "1",
         GeneratedAt = DateTime.UtcNow,
@@ -226,7 +244,7 @@ public class GetPidDataTests
             }
     };
 
-    StringContent xmlResponse = new StringContent(
+    private readonly StringContent xmlResponse = new StringContent(
     @"<stops xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" generatedAt=""2025-09-23T03:52:25"" dataFormatVersion=""3"">
 	<group name=""Adamov"" districtCode=""KH"" idosCategory=""301003"" idosName=""Adamov"" fullName=""Adamov"" uniqueName=""Adamov"" node=""7288"" cis=""33"" avgLat=""49.8581047"" avgLon=""15.4081345"" avgJtskX=""-675931.563"" avgJtskY=""-1077494.13"" municipality=""Adamov"" mainTrafficType=""bus"">
 		<stop id=""7288/1"" platform=""1"" altIdosName=""Adamov"" lat=""49.8581047"" lon=""15.4081345"" jtskX=""-675931.563"" jtskY=""-1077494.13"" zone=""8"" mainTrafficType=""bus"" wheelchairAccess=""unknown"" gtfsIds=""U7288Z1"">

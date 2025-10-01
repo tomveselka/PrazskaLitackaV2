@@ -5,7 +5,7 @@ using PrazskaLitacka.Webapi.Interfaces;
 namespace PrazskaLitacka.Webapi.Interfaces;
 public interface IGetPidDataService
 {
-    Task<Stops> GetStationXmlAsync();
+    public Task<Stops> GetStationXmlAsync();
     public List<Station> GetDataForDbInserts(Stops stops);
     public Task UpdateTables(List<Station> stations);
 }
