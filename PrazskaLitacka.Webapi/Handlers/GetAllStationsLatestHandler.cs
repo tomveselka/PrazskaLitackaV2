@@ -37,7 +37,7 @@ public class GetAllStationsLatestHandler : IRequestHandler<GetAllStationsLatestH
             {
                 var stops = await _pidDataService.GetStationXmlAsync();
                 var stationsListDownloaded = _pidDataService.GetDataForDbInserts(stops);
-                await _pidDataService.UpdateTables(stationsListDownloaded);
+                await _stationRepository.DropAllUploadNew(stationsListDownloaded);
                 _logger.LogInformation("STATION-LIST-UPDATE-SUCCESS Table of stations successfully updated");
             }
             catch (Exception ex)

@@ -97,8 +97,8 @@ public class GetAllStationsLatestHandlerTests
                 Id = 1,
                 TimeOfLastStationUpdate = new DateTime(2024, 1, 1, 0, 0, 0)
             });
-        _pidDataServiceMock
-            .Setup(x => x.UpdateTables(It.IsAny<List<Station>>()))
+        _stationRepositoryMock
+            .Setup(x => x.DropAllUploadNew(It.IsAny<List<Station>>()))
             .Returns(Task.CompletedTask);
 
         //Act
@@ -110,7 +110,7 @@ public class GetAllStationsLatestHandlerTests
 
         _pidDataServiceMock.Verify(p => p.GetStationXmlAsync(), Times.Once());
         _pidDataServiceMock.Verify(p => p.GetDataForDbInserts(It.IsAny<Stops>()), Times.Once());
-        _pidDataServiceMock.Verify(p => p.UpdateTables(It.IsAny<List<Station>>()), Times.Once());
+        _stationRepositoryMock.Verify(p => p.DropAllUploadNew(It.IsAny<List<Station>>()), Times.Once());
 
         _loggerMock.VerifyLogStartsWith(
            LogLevel.Information,
@@ -146,8 +146,8 @@ public class GetAllStationsLatestHandlerTests
                 Id = 1,
                 TimeOfLastStationUpdate = new DateTime(2024, 1, 1, 0, 0, 0)
             });
-        _pidDataServiceMock
-           .Setup(x => x.UpdateTables(It.IsAny<List<Station>>()))
+        _stationRepositoryMock
+           .Setup(x => x.DropAllUploadNew(It.IsAny<List<Station>>()))
            .Throws<Exception>();
 
         //Act
@@ -159,7 +159,7 @@ public class GetAllStationsLatestHandlerTests
 
         _pidDataServiceMock.Verify(p => p.GetStationXmlAsync(), Times.Once());
         _pidDataServiceMock.Verify(p => p.GetDataForDbInserts(It.IsAny<Stops>()), Times.Once());
-        _pidDataServiceMock.Verify(p => p.UpdateTables(It.IsAny<List<Station>>()), Times.Once());
+        _stationRepositoryMock.Verify(p => p.DropAllUploadNew(It.IsAny<List<Station>>()), Times.Once());
 
         _loggerMock.VerifyLogStartsWith(
            LogLevel.Information,

@@ -107,18 +107,5 @@ public class GetPidDataService : IGetPidDataService
 
         return string.Join(",", sortedList);
     }
-
-    public async Task UpdateTables(List<Station> newStations)
-    {
-        try
-        {
-            await _stationRepository.DropAllUploadNew(newStations);
-            _logger.LogInformation("PID-DATA-UPDATE-SUCCESS Successfully updated tables of stations and lines");
-        }
-        catch (Exception ex) 
-        { 
-            _logger.LogError("PID-DATA-UPDATE-FAILURE Failed to update tables of stations and lines, ex: {exeption}", ex);
-        }
-    }
 }
 
