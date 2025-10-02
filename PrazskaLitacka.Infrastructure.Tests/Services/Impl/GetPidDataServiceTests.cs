@@ -18,7 +18,7 @@ public class GetPidDataServiceTests
     private readonly Mock<IStationRepository> _stationRepositoryMock;
     private readonly HttpClient _httpClient;
 
-    private readonly GetPidDataService _getPidData;
+    private readonly GetPidDataService _sut;
     public GetPidDataServiceTests()
     {
         _loggerMock = new Mock<ILogger<GetPidDataService>>();
@@ -44,14 +44,14 @@ public class GetPidDataServiceTests
         _factoryMock.Setup(f => f.CreateClient("XmlDataClient"))
                    .Returns(_httpClient);
 
-        _getPidData = new GetPidDataService(_factoryMock.Object, _stationRepositoryMock.Object, _loggerMock.Object);
+        _sut = new GetPidDataService(_factoryMock.Object, _stationRepositoryMock.Object, _loggerMock.Object);
     }
 
     [Fact]
     public async Task GetStationXmlAsync_ReturnsStopsObjectAsync()
     {
         //Act
-        var stops = await _getPidData.GetStationXmlAsync();
+        var stops = await _sut.GetStationXmlAsync();
 
         //Assert
         Assert.IsType<Stops>(stops);
@@ -81,7 +81,7 @@ public class GetPidDataServiceTests
     public void GetDataForDbInserts_ShouldReturnList_WhenStopsObjectContainsData()
     {
         //Act
-        var stationList = _getPidData.GetDataForDbInserts(stops);
+        var stationList = _sut.GetDataForDbInserts(stops);
 
         //Assert
         Assert.Equal(2, stationList.Count);

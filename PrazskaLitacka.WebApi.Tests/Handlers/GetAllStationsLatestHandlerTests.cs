@@ -18,7 +18,7 @@ using static PrazskaLitacka.Webapi.Requests.StationRequests;
 namespace PrazskaLitacka.WebApi.Tests.Handlers;
 public class GetAllStationsLatestHandlerTests
 {
-    private readonly GetAllStationsLatestHandler _handler;
+    private readonly GetAllStationsLatestHandler _sut;
     private readonly Mock<ITechnicalVariablesRepository> _variablesRepositoryMock;
     private readonly Mock<IStationRepository> _stationRepositoryMock;
     private readonly Mock<IGetPidDataService> _pidDataServiceMock;
@@ -45,7 +45,7 @@ public class GetAllStationsLatestHandlerTests
             .Setup(x => x.GetStationXmlAsync())
             .ReturnsAsync(stops);
 
-        _handler = new GetAllStationsLatestHandler(_variablesRepositoryMock.Object, _pidDataServiceMock.Object, _loggerMock.Object, _stationRepositoryMock.Object, fakeTime);
+        _sut = new GetAllStationsLatestHandler(_variablesRepositoryMock.Object, _pidDataServiceMock.Object, _loggerMock.Object, _stationRepositoryMock.Object, fakeTime);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class GetAllStationsLatestHandlerTests
             });
 
         //Act
-        var stationList = await _handler.Handle(query, new CancellationToken());
+        var stationList = await _sut.Handle(query, new CancellationToken());
 
         //Assert
         Assert.Single(stationList);
@@ -102,7 +102,7 @@ public class GetAllStationsLatestHandlerTests
             .Returns(Task.CompletedTask);
 
         //Act
-        var stationList = await _handler.Handle(query, new CancellationToken());
+        var stationList = await _sut.Handle(query, new CancellationToken());
 
         //Assert
         Assert.Single(stationList);
@@ -151,7 +151,7 @@ public class GetAllStationsLatestHandlerTests
            .Throws<Exception>();
 
         //Act
-        var stationList = await _handler.Handle(query, new CancellationToken());
+        var stationList = await _sut.Handle(query, new CancellationToken());
 
         //Assert
         Assert.Single(stationList);

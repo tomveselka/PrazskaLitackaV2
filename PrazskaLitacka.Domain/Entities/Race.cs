@@ -8,14 +8,14 @@ namespace PrazskaLitacka.Domain.Entities
         public int Id { get; set; }
         [Required] 
         public DateOnly Date { get; set; }
-        public DateTimeOffset? StartTime { get; set; }
-        public DateTimeOffset? EndTime { get; set; }
+        public DateTimeOffset StartTime { get; set; }
+        public DateTimeOffset EndTime { get; set; }
         [Required] 
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
         public string? Place { get; set; }
         public string? Coordinates { get; set; }
-        public DateTimeOffset? BonusStopDisplayTime { get; set; }
+        public DateTimeOffset BonusStopDisplayTime { get; set; }
         public bool RegistrationOpen { get; set; }
         public bool AcceptsResults { get; set; }
 

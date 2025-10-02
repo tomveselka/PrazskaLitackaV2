@@ -10,7 +10,7 @@ using static PrazskaLitacka.Webapi.Requests.StationRequests;
 namespace PrazskaLitacka.WebApi.Tests.Handlers;
 public class GetBonusStationsLinesHandlerTests
 {
-    private readonly GetBonusStationsLinesHandler _handler;
+    private readonly GetBonusStationsLinesHandler _sut;
     private readonly Mock<IBonusLineRepository> _lineRepositoryMock;
     private readonly Mock<IBonusStationRepository> _stationRepositoryMock;
     private readonly Mock<IRaceRepository> _raceRepositoryMock;
@@ -28,7 +28,7 @@ public class GetBonusStationsLinesHandlerTests
         fakeTime.SetUtcNow(new DateTimeOffset(2025, 1, 1, 10, 0, 0, TimeSpan.Zero));
         fakeTime.SetLocalTimeZone(TimeZoneInfo.Utc);
 
-        _handler = new GetBonusStationsLinesHandler(_stationRepositoryMock.Object, _lineRepositoryMock.Object, _raceRepositoryMock.Object, _loggerMock.Object, fakeTime);
+        _sut = new GetBonusStationsLinesHandler(_stationRepositoryMock.Object, _lineRepositoryMock.Object, _raceRepositoryMock.Object, _loggerMock.Object, fakeTime);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class GetBonusStationsLinesHandlerTests
             .ReturnsAsync(race);
 
         //Act
-        var response = await _handler.Handle(query, new CancellationToken());
+        var response = await _sut.Handle(query, new CancellationToken());
 
         //Assert
         Assert.Empty(response.BonusStations);
@@ -120,7 +120,7 @@ public class GetBonusStationsLinesHandlerTests
             .ReturnsAsync(bonusStationList);
 
         //Act
-        var response = await _handler.Handle(query, new CancellationToken());
+        var response = await _sut.Handle(query, new CancellationToken());
 
         //Assert
         Assert.Single(response.BonusStations);
