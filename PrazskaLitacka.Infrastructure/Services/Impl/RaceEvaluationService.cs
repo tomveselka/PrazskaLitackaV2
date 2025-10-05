@@ -25,7 +25,7 @@ public class RaceEvaluationService : IRaceEvaluationService
     public async Task<RaceEntry> EvaluateRace(RaceEntry raceEntry)
     {
         var pointsList = await _pointsRepository.GetAll();
-        var pointsMap = PointsToHashMap(pointsList);
+        var pointsMap = PointsToDictionary(pointsList);
         var rows = raceEntry.Rows;
         var visitedStations = new List<string>();
         var visitedBonusStations = new List<string>();
@@ -79,7 +79,7 @@ public class RaceEvaluationService : IRaceEvaluationService
         return raceEntry;
     }
 
-    public Dictionary<string, int> PointsToHashMap(List<Points> pointsList)
+    public Dictionary<string, int> PointsToDictionary(List<Points> pointsList)
     {
         var dict = new Dictionary<string, int>();
         foreach (var point in pointsList) 
