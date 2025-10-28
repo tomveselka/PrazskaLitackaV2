@@ -8,12 +8,12 @@ namespace PrazskaLitacka.Domain.Entities
         public int Id { get; set; }
         [Required] 
         public int RacerId { get; set; }
-        public double StationLAndLinesPointsTotal { get; set; }
-        public double GoodDeeds { get; set; }
-        public double Penalties { get; set; }
-        public double PointsTotal { get; set; }
-        public bool VerificationNeeded { get; set; }
-        public bool VerifiedManualy { get; set; }
+        public double StationLAndLinesPointsTotal { get; set; } = 0;
+        public double GoodDeeds { get; set; } = 0;
+        public double Penalties { get; set; } = 0;
+        public double PointsTotal { get; set; } = 0;
+        public bool VerificationNeeded { get; set; } = false;
+        public bool VerifiedManualy { get; set; } = false;
         public string? VerifierId { get; set; }
         public DateTimeOffset? TimeOfReturn { get; set; }
 

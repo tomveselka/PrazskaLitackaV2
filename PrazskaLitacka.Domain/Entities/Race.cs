@@ -16,8 +16,8 @@ namespace PrazskaLitacka.Domain.Entities
         public string? Place { get; set; }
         public string? Coordinates { get; set; }
         public DateTimeOffset BonusStopDisplayTime { get; set; }
-        public bool RegistrationOpen { get; set; }
-        public bool AcceptsResults { get; set; }
+        public bool RegistrationOpen { get; set; } = false;
+        public bool AcceptsResults { get; set; } = false;
 
         public ICollection<RaceEntry>? RaceEntries { get; set; } = new List<RaceEntry>();
         public ICollection<BonusStation>? BonusStations { get; set; } = new List<BonusStation>();
