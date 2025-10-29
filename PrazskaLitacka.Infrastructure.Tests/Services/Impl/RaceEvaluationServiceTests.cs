@@ -3,11 +3,7 @@ using Moq;
 using PrazskaLitacka.Domain.Entities;
 using PrazskaLitacka.Domain.Interfaces;
 using PrazskaLitacka.Infrastructure.Services.Impl;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PrazskaLitacka.Infrastructure.Tests.Extensions;
 
 namespace PrazskaLitacka.Infrastructure.Tests.Services.Impl;
 public class RaceEvaluationServiceTests
@@ -15,6 +11,8 @@ public class RaceEvaluationServiceTests
     private readonly Mock<IPointsRepository> _pointsRepositoryMock;
     private readonly Mock<IRaceRepository> _raceRepositoryMock;
     private readonly Mock<ILogger<RaceEvaluationService>> _loggerMock;
+    private readonly Mock<IBonusLineRepository> _bonusLineRepositoryMock;
+    private readonly Mock<IBonusStationRepository> _bonusStationRepositoryMock;
 
     private readonly RaceEvaluationService _sut;
 
@@ -23,7 +21,9 @@ public class RaceEvaluationServiceTests
         _pointsRepositoryMock = new Mock<IPointsRepository>();
         _raceRepositoryMock = new Mock<IRaceRepository>();
         _loggerMock = new Mock<ILogger<RaceEvaluationService>>();
-        _sut = new RaceEvaluationService(_pointsRepositoryMock.Object, _raceRepositoryMock.Object, _loggerMock.Object);
+        _bonusLineRepositoryMock = new Mock<IBonusLineRepository>();
+        _bonusStationRepositoryMock = new Mock<IBonusStationRepository>();
+        _sut = new RaceEvaluationService(_pointsRepositoryMock.Object, _raceRepositoryMock.Object, _loggerMock.Object, _bonusLineRepositoryMock.Object, _bonusStationRepositoryMock.Object);
     }
     
     private RaceEntry raceEntry = new RaceEntry()
@@ -78,7 +78,47 @@ public class RaceEvaluationServiceTests
                 PointsValue = 25
             }
         };
-    
+    private Race race = new Race()
+    {
+        Id = 1,
+        Date = new DateOnly(2025, 10, 10),
+        Title = "Race1",
+        StartTime = new DateTimeOffset(2025, 10, 10, 16, 00, 00, TimeSpan.Zero),
+        EndTime = new DateTimeOffset(2025, 10, 10, 19, 00, 00, TimeSpan.Zero),
+        BonusStopDisplayTime = new DateTimeOffset(2025, 10, 10, 15, 55, 00, TimeSpan.Zero)
+    };
+
+    private List<BonusLine> bonusLines = new List<BonusLine>()
+    {
+        new BonusLine()
+        {
+            Id = 1,
+            Name = "Metro2",
+            Type = "metro",
+            RaceId = 1
+        }
+    };
+
+    private List<BonusStation> bonusStations = new List<BonusStation>()
+    {
+        new BonusStation()
+        {
+            Id = 1,
+            Name = "BonusStation1",
+            Zone = "1",
+            StationId = "stationId1",
+            RaceId= 1,
+        },
+         new BonusStation()
+        {
+            Id = 2,
+            Name = "BonusStation2",
+            Zone = "0,1",
+            StationId = "stationId2",
+            RaceId= 1,
+        }
+    };
+
     [Fact]
     public async Task EvaluateRace_ReturnsPoints_WhenRaceFinishedAndLate()
     {
@@ -90,19 +130,29 @@ public class RaceEvaluationServiceTests
             .ReturnsAsync(pointsList);
         _raceRepositoryMock
             .Setup(x => x.GetById(It.IsAny<int>()))
-            .ReturnsAsync(new Race()
-            {
-                Id = 1,
-                Date = new DateOnly(2025, 10, 10),
-                Title = "Race1",
-                StartTime = new DateTimeOffset(2025, 10, 10, 16, 00, 00, TimeSpan.Zero),
-                EndTime = new DateTimeOffset(2025,10,10,19,00,00,TimeSpan.Zero),
-                BonusStopDisplayTime = new DateTimeOffset(2025, 10, 10, 15, 55, 00, TimeSpan.Zero)
-            });
+            .ReturnsAsync(race);
+        _bonusLineRepositoryMock
+            .Setup(x => x.GetAllForRace(It.IsAny<int>()))
+            .ReturnsAsync(bonusLines);
+        _bonusStationRepositoryMock
+            .Setup(x => x.GetAllForRace(It.IsAny<int>()))
+            .ReturnsAsync(bonusStations);
+
         //Act
         var raceEntryEvaluated = await _sut.EvaluateRace(raceEntry);
-    }
 
+        //Assert
+        _pointsRepositoryMock.Verify(x => x.GetAll(), Times.Once);
+        _raceRepositoryMock.Verify(x => x.GetById(It.IsAny<int>()), Times.Once);
+        _bonusLineRepositoryMock.Verify(x => x.GetAllForRace(It.IsAny<int>()), Times.Once);
+        _bonusStationRepositoryMock.Verify(x => x.GetAllForRace(It.IsAny<int>()), Times.Once);
+
+        _loggerMock.VerifyLogStartsWith(
+           LogLevel.Information,
+           "RACE-ENTRY-EVAL-BEGIN Began evaluating race entry 1",
+           Times.Once()
+       );
+    }
 
     [Fact]
     public void GetPenaltyPointsForBeingLate_Returns10_WhenFewSecondsLate()
@@ -197,5 +247,18 @@ public class RaceEvaluationServiceTests
 
         //Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public void CalculatePointsForZones_ReturnsSixty()
+    {
+        //Arrange
+        var zoneList = new List<string> { "P", "B", "0", "1", "2", "3", "P"};
+
+        //Act
+        var result = _sut.CalculatePointsForZones(zoneList, 20);
+
+        //Assert
+        Assert.Equal(60, result);
     }
 }

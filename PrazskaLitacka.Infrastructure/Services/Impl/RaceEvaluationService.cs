@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MediatR;
+using Microsoft.Extensions.Logging;
+using PidStops.Models;
 using PrazskaLitacka.Domain.Entities;
 using PrazskaLitacka.Domain.Interfaces;
+using PrazskaLitacka.Infrastructure.Persistence;
 using PrazskaLitacka.Webapi.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -13,14 +16,18 @@ namespace PrazskaLitacka.Infrastructure.Services.Impl;
 public class RaceEvaluationService : IRaceEvaluationService
 {
     private readonly IPointsRepository _pointsRepository;
+    private readonly IBonusLineRepository _bonusLineRepository;
+    private readonly IBonusStationRepository _bonusStationRepository;
     private readonly IRaceRepository _raceRepository;
     private readonly ILogger<RaceEvaluationService> _logger;
 
-    public RaceEvaluationService(IPointsRepository pointsRepository, IRaceRepository raceRepository, ILogger<RaceEvaluationService> logger)
+    public RaceEvaluationService(IPointsRepository pointsRepository, IRaceRepository raceRepository, ILogger<RaceEvaluationService> logger, IBonusLineRepository bonusLineRepository, IBonusStationRepository bonusStationRepository)
     {
         _pointsRepository = pointsRepository;
         _raceRepository = raceRepository;
         _logger = logger;
+        _bonusLineRepository = bonusLineRepository;
+        _bonusStationRepository = bonusStationRepository;
     }
 
     public async Task<RaceEntry> EvaluateRace(RaceEntry raceEntry)
@@ -30,12 +37,15 @@ public class RaceEvaluationService : IRaceEvaluationService
         var pointsList = await _pointsRepository.GetAll();
         var pointsMap = PointsToDictionary(pointsList);
 
+        var stations = await _bonusStationRepository.GetAllForRace(raceEntry.RaceId);
+        var lines = await _bonusLineRepository.GetAllForRace(raceEntry.RaceId);
 
         var rows = raceEntry.Rows;
         var visitedStations = new List<string>();
         var visitedBonusStations = new List<string>();
         var visitedLines = new List<string>();
         var visitedBonusLines = new List<string>();
+        var visitedZones = new List<string>();
 
         _logger.LogInformation("RACE-ENTRY-EVAL-BEGIN Began evaluating race entry {raceEntry}", raceEntry.Id);
 
@@ -91,15 +101,17 @@ public class RaceEvaluationService : IRaceEvaluationService
                 row.LineBonus = true;
             }
 
-            raceEntry.StationLAndLinesPointsTotal += row.StationFromPoints + row.StationToPoints + row.LinePoints;
+            raceEntry.PointsForStationsAndLinesTotal += row.StationFromPoints + row.StationToPoints + row.LinePoints;
         }
+
+        raceEntry.PointsForZones = CalculatePointsForZones(visitedZones, pointsMap.GetValueOrDefault("zone", 0));
 
         if(raceEntry.TimeOfReturn is DateTimeOffset timeOfReturn)
         {
-            raceEntry.Penalties = GetPenaltyPointsForBeingLate(timeOfReturn, race!.EndTime);
+            raceEntry.PointsForPenaltiesNegative = GetPenaltyPointsForBeingLate(timeOfReturn, race!.EndTime);
         }
 
-        raceEntry.PointsTotal = raceEntry.PointsTotal + raceEntry.Penalties;
+        raceEntry.PointsTotal = raceEntry.PointsTotal + raceEntry.PointsForZones + raceEntry.PointsForBonusStopsAndLines + raceEntry.PointsForPenaltiesNegative;
 
         _logger.LogInformation("RACE-ENTRY-EVAL-FINISH Finished evaluating race entry {raceEntry} with result of {points} points", raceEntry.Id, raceEntry.PointsTotal);
 
@@ -154,5 +166,16 @@ public class RaceEvaluationService : IRaceEvaluationService
 
         return sb.ToString().Normalize(NormalizationForm.FormC)
                  .ToLowerInvariant();
+    }
+
+    internal double CalculatePointsForZones(List<string> visitedZones, int pointsForZone)
+    {
+        var numberOfZones = visitedZones
+            .Where(x => x != "P" && x != "B" && x != "0")
+            .Distinct()
+            .ToList()
+            .Count();
+
+        return numberOfZones * pointsForZone;
     }
 }
