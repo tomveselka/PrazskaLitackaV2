@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using PrazskaLitacka.Domain.Entities;
+using PrazskaLitacka.Domain.Enums;
 using PrazskaLitacka.Domain.Interfaces;
 using PrazskaLitacka.Infrastructure.Services.Impl;
 using PrazskaLitacka.Infrastructure.Tests.Extensions;
@@ -38,9 +39,21 @@ public class RaceEvaluationServiceTests
             {
                 Id = 1,
                 StationFromName = "StationFrom1",
+                StationFromZones="B,0",
                 StationToName = "StationTo1",
+                StationToZones="B",
                 LineName = "Metro1",
-                LineType = "metro",
+                LineType = TrafficType.Metro,
+            },
+             new Row()
+            {
+                Id = 2,
+                StationFromName = "StationFrom2",
+                StationFromZones="3",
+                StationToName = "BonusStation2",
+                StationToZones="4",
+                LineName = "trainR1",
+                LineType = TrafficType.TrainR,
             }
         }
     };
@@ -50,33 +63,52 @@ public class RaceEvaluationServiceTests
             new Points()
             {
                 Id = 1,
-                Name = "metro",
+                Name = "Metro",
                 PointsValue = 2
             },
             new Points()
             {
                 Id = 2,
-                Name = "tram",
+                Name = "Tram",
                 PointsValue = 3
             },
             new Points()
             {
                 Id = 3,
-                Name = "bus",
+                Name = "TrainR",
                 PointsValue = 4
             },
             new Points()
             {
-                Id = 3,
+                Id = 4,
                 Name = "bonusStop",
                 PointsValue = 20
             },
             new Points()
             {
-                Id = 3,
-                Name = "bonusLines",
+                Id = 5,
+                Name = "bonusLine",
                 PointsValue = 25
+            },
+            new Points()
+            {
+                Id = 6,
+                Name = "stop",
+                PointsValue = 3
+            },
+            new Points()
+            {
+                Id = 6,
+                Name = "zone",
+                PointsValue = 15
+            },
+            new Points()
+            {
+                Id = 6,
+                Name = "late",
+                PointsValue = 10
             }
+
         };
     private Race race = new Race()
     {
@@ -93,8 +125,8 @@ public class RaceEvaluationServiceTests
         new BonusLine()
         {
             Id = 1,
-            Name = "Metro2",
-            Type = "metro",
+            Name = "trainR1",
+            Type = TrafficType.TrainR,
             RaceId = 1
         }
     };
@@ -142,6 +174,11 @@ public class RaceEvaluationServiceTests
         var raceEntryEvaluated = await _sut.EvaluateRace(raceEntry);
 
         //Assert
+        Assert.Equal(30, raceEntryEvaluated.PointsForZones);
+        Assert.Equal(60, raceEntryEvaluated.PointsForPenaltiesNegative);
+        Assert.Equal(63, raceEntryEvaluated.PointsForStationsAndLinesTotal);
+        Assert.Equal(33, raceEntryEvaluated.PointsTotal);
+
         _pointsRepositoryMock.Verify(x => x.GetAll(), Times.Once);
         _raceRepositoryMock.Verify(x => x.GetById(It.IsAny<int>()), Times.Once);
         _bonusLineRepositoryMock.Verify(x => x.GetAllForRace(It.IsAny<int>()), Times.Once);
@@ -162,7 +199,7 @@ public class RaceEvaluationServiceTests
         var raceEndTime = new DateTimeOffset(2025, 01, 01, 19, 00, 00, TimeSpan.Zero);
 
         //Act
-        var penalty = _sut.GetPenaltyPointsForBeingLate(timeOfReturn, raceEndTime);
+        var penalty = _sut.GetPenaltyPointsForBeingLate(timeOfReturn, raceEndTime, 10);
 
         //Assert
         Assert.Equal(10, penalty);            
@@ -176,7 +213,7 @@ public class RaceEvaluationServiceTests
         var raceEndTime = new DateTimeOffset(2025, 01, 01, 19, 00, 00, TimeSpan.Zero);
 
         //Act
-        var penalty = _sut.GetPenaltyPointsForBeingLate(timeOfReturn, raceEndTime);
+        var penalty = _sut.GetPenaltyPointsForBeingLate(timeOfReturn, raceEndTime, 10);
 
         //Assert
         Assert.Equal(0, penalty);

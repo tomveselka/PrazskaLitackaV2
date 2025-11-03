@@ -9,9 +9,7 @@ namespace PrazskaLitacka.Domain.Entities
         [Required] 
         public int RacerId { get; set; }
         public double PointsForStationsAndLinesTotal { get; set; } = 0;
-        public double PointsForBonusStopsAndLines { get; set; } = 0;
         public double PointsForZones { get; set; } = 0;
-
         public double PointsForGoodDeeds { get; set; } = 0;
         public double PointsForPenaltiesNegative { get; set; } = 0;
         public double PointsTotal { get; set; } = 0;

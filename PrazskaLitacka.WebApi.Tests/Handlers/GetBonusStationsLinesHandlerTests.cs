@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Time.Testing;
 using Moq;
 using PrazskaLitacka.Domain.Entities;
+using PrazskaLitacka.Domain.Enums;
 using PrazskaLitacka.Domain.Interfaces;
 using PrazskaLitacka.Webapi.Handlers;
 using PrazskaLitacka.WebApi.Tests.Extensions;
@@ -103,7 +104,7 @@ public class GetBonusStationsLinesHandlerTests
                 RaceId = 1,
                 Id = 1,
                 Name = "Name",
-                Type = "tram"
+                Type = TrafficType.Ferry
             }
         };
 

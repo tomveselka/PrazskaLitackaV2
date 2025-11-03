@@ -37,8 +37,10 @@ public class RaceEvaluationService : IRaceEvaluationService
         var pointsList = await _pointsRepository.GetAll();
         var pointsMap = PointsToDictionary(pointsList);
 
-        var stations = await _bonusStationRepository.GetAllForRace(raceEntry.RaceId);
-        var lines = await _bonusLineRepository.GetAllForRace(raceEntry.RaceId);
+        var bonusStations = await _bonusStationRepository.GetAllForRace(raceEntry.RaceId);
+        var bonusStationsList = bonusStations.Select(x => x.Name).ToList();
+        var bonusLines = await _bonusLineRepository.GetAllForRace(raceEntry.RaceId);
+        var bonusLinesList = bonusLines.Select(x => x.Name).ToList();
 
         var rows = raceEntry.Rows;
         var visitedStations = new List<string>();
@@ -68,7 +70,7 @@ public class RaceEvaluationService : IRaceEvaluationService
                 row.StationFromDuplicate = false;
             }
 
-            if (!IsInlist(visitedBonusStations, row.StationFromName))
+            if (IsInlist(bonusStationsList, row.StationFromName) && !IsInlist(visitedBonusStations, row.StationFromName))
             {
                 visitedBonusStations.Add(row.StationFromName);
                 row.StationFromPoints += pointsMap.GetValueOrDefault("bonusStop", 0);
@@ -81,7 +83,7 @@ public class RaceEvaluationService : IRaceEvaluationService
                 row.StationToPoints = pointsMap.GetValueOrDefault("stop", 0);
             }
 
-            if (!IsInlist(visitedBonusStations, row.StationToName))
+            if (IsInlist(bonusStationsList, row.StationToName) && !IsInlist(visitedBonusStations, row.StationToName))
             {
                 visitedBonusStations.Add(row.StationToName);
                 row.StationToPoints += pointsMap.GetValueOrDefault("bonusStop", 0);
@@ -91,15 +93,18 @@ public class RaceEvaluationService : IRaceEvaluationService
             if (!IsInlist(visitedLines, row.LineName))
             {
                 visitedStations.Add(row.StationToName);
-                row.LinePoints = pointsMap.GetValueOrDefault(row.LineType, 0);
+                row.LinePoints = pointsMap.GetValueOrDefault(row.LineType.ToString(), 0);
             }
 
-            if (!IsInlist(visitedBonusLines, row.LineName))
+            if (IsInlist(bonusLinesList, row.LineName) && !IsInlist(visitedBonusLines, row.LineName))
             {
                 visitedBonusLines.Add(row.LineName);
                 row.LinePoints += pointsMap.GetValueOrDefault("bonusLine", 0);
                 row.LineBonus = true;
             }
+
+            visitedZones.AddRange(row.StationFromZones.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+            visitedZones.AddRange(row.StationToZones.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
 
             raceEntry.PointsForStationsAndLinesTotal += row.StationFromPoints + row.StationToPoints + row.LinePoints;
         }
@@ -108,10 +113,10 @@ public class RaceEvaluationService : IRaceEvaluationService
 
         if(raceEntry.TimeOfReturn is DateTimeOffset timeOfReturn)
         {
-            raceEntry.PointsForPenaltiesNegative = GetPenaltyPointsForBeingLate(timeOfReturn, race!.EndTime);
+            raceEntry.PointsForPenaltiesNegative = GetPenaltyPointsForBeingLate(timeOfReturn, race!.EndTime, pointsMap.GetValueOrDefault("late", 0));
         }
 
-        raceEntry.PointsTotal = raceEntry.PointsTotal + raceEntry.PointsForZones + raceEntry.PointsForBonusStopsAndLines + raceEntry.PointsForPenaltiesNegative;
+        raceEntry.PointsTotal = raceEntry.PointsForStationsAndLinesTotal + raceEntry.PointsForZones + raceEntry.PointsForGoodDeeds - raceEntry.PointsForPenaltiesNegative;
 
         _logger.LogInformation("RACE-ENTRY-EVAL-FINISH Finished evaluating race entry {raceEntry} with result of {points} points", raceEntry.Id, raceEntry.PointsTotal);
 
@@ -128,14 +133,14 @@ public class RaceEvaluationService : IRaceEvaluationService
         return dict;
     }
 
-    internal double GetPenaltyPointsForBeingLate(DateTimeOffset timeOfReturn, DateTimeOffset RaceEndTime)
+    internal double GetPenaltyPointsForBeingLate(DateTimeOffset timeOfReturn, DateTimeOffset RaceEndTime, int pointsForMinuteDelay)
     {
-        if(timeOfReturn <= RaceEndTime)
+        if (timeOfReturn <= RaceEndTime)
         {
             return 0;
         }
         var difference = Math.Ceiling((timeOfReturn - RaceEndTime).TotalMinutes);
-        return difference * 10;
+        return difference * pointsForMinuteDelay;
     }
 
     internal bool IsInlist(List<string> list, string comparedString) 

@@ -1,3 +1,4 @@
+using PrazskaLitacka.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace PrazskaLitacka.Domain.Entities;
@@ -7,7 +8,7 @@ public class BonusLine
     [Key] 
     public int Id { get; set; }
     [Required] 
-    public string Type { get; set; } = null!;
+    public TrafficType Type { get; set; }
     [Required] 
     public string Name { get; set; } = null!;
 
