@@ -1,5 +1,5 @@
 using PrazskaLitacka.Infrastructure.Services.Impl;
-using PrazskaLitacka.Webapi.Interfaces;
+using PrazskaLitacka.Domain.Interfaces.ServiceInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

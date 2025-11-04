@@ -1,6 +1,6 @@
 ﻿using PrazskaLitacka.Domain.Entities;
 
-namespace PrazskaLitacka.Webapi.Interfaces;
+namespace PrazskaLitacka.Domain.Interfaces.ServiceInterfaces;
 
 public interface IRaceEvaluationService
 {

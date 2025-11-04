@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.10" />
   </ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\PrazskaLitacka.Domain\PrazskaLitacka.Domain.csproj" />
-		<ProjectReference Include="..\PrazskaLitacka.Webapi\PrazskaLitacka.Webapi.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

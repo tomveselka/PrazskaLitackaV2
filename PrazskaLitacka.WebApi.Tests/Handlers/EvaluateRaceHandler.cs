@@ -2,13 +2,13 @@
 using Microsoft.Extensions.Logging;
 using PrazskaLitacka.Domain.Entities;
 using PrazskaLitacka.Domain.Interfaces;
+using PrazskaLitacka.Domain.Interfaces.ServiceInterfaces;
 using PrazskaLitacka.Webapi.Handlers;
-using PrazskaLitacka.Webapi.Interfaces;
 using static PrazskaLitacka.Webapi.Requests.RaceEntryRequests;
 
 
 namespace PrazskaLitacka.WebApi.Tests.Handlers;
-public class EvaluateRaceHandler : IRequestHandler<EvaluateRaceEntry, RaceEntry>
+public class EvaluateRaceHandler : IRequestHandler<EvaluateRaceEntryCommand, RaceEntry>
 {
     private readonly IPointsRepository _pointsRepository;
     private readonly ILogger<EvaluateRaceHandler> _logger;
@@ -21,7 +21,7 @@ public class EvaluateRaceHandler : IRequestHandler<EvaluateRaceEntry, RaceEntry>
         _raceEvaluationService = raceEvaluationService;
     }
 
-    public Task<RaceEntry> Handle(EvaluateRaceEntry request, CancellationToken cancellationToken)
+    public Task<RaceEntry> Handle(EvaluateRaceEntryCommand request, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

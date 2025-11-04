@@ -81,31 +81,31 @@ public class RaceEvaluationServiceTests
             new Points()
             {
                 Id = 4,
-                Name = "bonusStop",
+                Name = "BONUS_STOP",
                 PointsValue = 20
             },
             new Points()
             {
                 Id = 5,
-                Name = "bonusLine",
+                Name = "BONUS_LINE",
                 PointsValue = 25
             },
             new Points()
             {
                 Id = 6,
-                Name = "stop",
+                Name = "STOP",
                 PointsValue = 3
             },
             new Points()
             {
                 Id = 6,
-                Name = "zone",
+                Name = "ZONE",
                 PointsValue = 15
             },
             new Points()
             {
                 Id = 6,
-                Name = "late",
+                Name = "LATE",
                 PointsValue = 10
             }
 
@@ -187,6 +187,12 @@ public class RaceEvaluationServiceTests
         _loggerMock.VerifyLogStartsWith(
            LogLevel.Information,
            "RACE-ENTRY-EVAL-BEGIN Began evaluating race entry 1",
+           Times.Once()
+       );
+
+        _loggerMock.VerifyLogStartsWith(
+           LogLevel.Information,
+           "RACE-ENTRY-EVAL-FINISH Finished evaluating race entry 1 with result of 33 points",
            Times.Once()
        );
     }

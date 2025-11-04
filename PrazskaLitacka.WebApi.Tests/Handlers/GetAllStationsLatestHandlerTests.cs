@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
-using PidStops.Models;
 using PrazskaLitacka.Domain.Entities;
 using PrazskaLitacka.Domain.Interfaces;
+using PrazskaLitacka.Domain.Interfaces.ServiceInterfaces;
+using PrazskaLitacka.Domain.PidStops.Models;
 using PrazskaLitacka.Webapi.Handlers;
-using PrazskaLitacka.Webapi.Interfaces;
 using PrazskaLitacka.WebApi.Tests.Extensions;
 using System;
 using System.Collections.Generic;

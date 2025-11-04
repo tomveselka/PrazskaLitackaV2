@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using PrazskaLitacka.Webapi.Interfaces;
 using PrazskaLitacka.Infrastructure.Exceptions;
 using PrazskaLitacka.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
-using PidStops.Models;
 using Microsoft.EntityFrameworkCore;
 using PrazskaLitacka.Domain.DbContexts;
 using PrazskaLitacka.Domain.Interfaces;
+using PrazskaLitacka.Domain.Interfaces.ServiceInterfaces;
+using PrazskaLitacka.Domain.PidStops.Models;
 
 namespace PrazskaLitacka.Infrastructure.Services.Impl;
 public class GetPidDataService : IGetPidDataService

@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using PrazskaLitacka.Domain.Entities;
 using PrazskaLitacka.Domain.Interfaces;
+using PrazskaLitacka.Domain.Interfaces.ServiceInterfaces;
 using PrazskaLitacka.Webapi.Dto;
-using PrazskaLitacka.Webapi.Interfaces;
 using static PrazskaLitacka.Webapi.Requests.StationRequests;
 
 namespace PrazskaLitacka.Webapi.Handlers;

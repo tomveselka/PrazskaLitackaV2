@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
-using PidStops.Models;
 using PrazskaLitacka.Domain.Interfaces;
+using PrazskaLitacka.Domain.PidStops.Models;
 using PrazskaLitacka.Infrastructure.Services.Impl;
 using PrazskaLitacka.Infrastructure.Tests.Extensions;
 using System.Net;

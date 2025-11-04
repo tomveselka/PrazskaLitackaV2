@@ -48,20 +48,21 @@ namespace PrazskaLitacka.Domain.DbContexts
 
             // Points seeding
             var seed = new (int id, string name, int pts)[] {
-                (1,"METRO",2),
-                (2,"BUS_CITY",3),
-                (3,"TRAM",4),
-                (4,"BUS_300",5),
-                (5,"BUS_400",6),
-                (6,"TRAIN_OS",7),
-                (7,"TRAIN_R",8),
-                (8,"FERRY",9),
-                (9,"TROLLEYBUS",3),
-                (10,"FUNICULAR",10),
-                (11,"STATION",3),
-                (12,"BONUS_STATION",25),
-                (13,"BONUS_LINE",25),
-                (14,"AREA",20)
+                (1,"Bike",1),
+                (2,"Metro",2),
+                (3,"BusPrague",3),
+                (4,"Tram",4),
+                (5,"BusRegional",5),
+                (6,"TrainOs",7),
+                (7,"TrainR",8),
+                (8,"Ferry",9),
+                (9,"Trolleybus",6),
+                (10,"Funicular",10),
+                (11,"STOP",3),
+                (12,"BONUS_STOP",20),
+                (13,"BONUS_LINE",15),
+                (14,"ZONE",25),
+                (15,"LATE",10)
             };
             modelBuilder.Entity<Points>().HasData(seed.Select(s => new Points { Id = s.id, Name = s.name, PointsValue = s.pts }));
         }

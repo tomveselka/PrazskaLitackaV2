@@ -1,10 +1,8 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using PidStops.Models;
+﻿using Microsoft.Extensions.Logging;
 using PrazskaLitacka.Domain.Entities;
 using PrazskaLitacka.Domain.Interfaces;
+using PrazskaLitacka.Domain.Interfaces.ServiceInterfaces;
 using PrazskaLitacka.Infrastructure.Persistence;
-using PrazskaLitacka.Webapi.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -66,27 +64,27 @@ public class RaceEvaluationService : IRaceEvaluationService
             if (!IsInlist(visitedStations,row.StationFromName))
             {
                 visitedStations.Add(row.StationFromName);
-                row.StationFromPoints = pointsMap.GetValueOrDefault("stop", 0);
+                row.StationFromPoints = pointsMap.GetValueOrDefault("STOP", 0);
                 row.StationFromDuplicate = false;
             }
 
             if (IsInlist(bonusStationsList, row.StationFromName) && !IsInlist(visitedBonusStations, row.StationFromName))
             {
                 visitedBonusStations.Add(row.StationFromName);
-                row.StationFromPoints += pointsMap.GetValueOrDefault("bonusStop", 0);
+                row.StationFromPoints += pointsMap.GetValueOrDefault("BONUS_STOP", 0);
                 row.StationFromBonus = true;
             }
 
             if (!IsInlist(visitedStations, row.StationToName))
             {
                 visitedStations.Add(row.StationToName);
-                row.StationToPoints = pointsMap.GetValueOrDefault("stop", 0);
+                row.StationToPoints = pointsMap.GetValueOrDefault("STOP", 0);
             }
 
             if (IsInlist(bonusStationsList, row.StationToName) && !IsInlist(visitedBonusStations, row.StationToName))
             {
                 visitedBonusStations.Add(row.StationToName);
-                row.StationToPoints += pointsMap.GetValueOrDefault("bonusStop", 0);
+                row.StationToPoints += pointsMap.GetValueOrDefault("BONUS_STOP", 0);
                 row.StationToBonus = true;
             }
 
@@ -99,7 +97,7 @@ public class RaceEvaluationService : IRaceEvaluationService
             if (IsInlist(bonusLinesList, row.LineName) && !IsInlist(visitedBonusLines, row.LineName))
             {
                 visitedBonusLines.Add(row.LineName);
-                row.LinePoints += pointsMap.GetValueOrDefault("bonusLine", 0);
+                row.LinePoints += pointsMap.GetValueOrDefault("BONUS_LINE", 0);
                 row.LineBonus = true;
             }
 
@@ -109,11 +107,11 @@ public class RaceEvaluationService : IRaceEvaluationService
             raceEntry.PointsForStationsAndLinesTotal += row.StationFromPoints + row.StationToPoints + row.LinePoints;
         }
 
-        raceEntry.PointsForZones = CalculatePointsForZones(visitedZones, pointsMap.GetValueOrDefault("zone", 0));
+        raceEntry.PointsForZones = CalculatePointsForZones(visitedZones, pointsMap.GetValueOrDefault("ZONE", 0));
 
         if(raceEntry.TimeOfReturn is DateTimeOffset timeOfReturn)
         {
-            raceEntry.PointsForPenaltiesNegative = GetPenaltyPointsForBeingLate(timeOfReturn, race!.EndTime, pointsMap.GetValueOrDefault("late", 0));
+            raceEntry.PointsForPenaltiesNegative = GetPenaltyPointsForBeingLate(timeOfReturn, race!.EndTime, pointsMap.GetValueOrDefault("LATE", 0));
         }
 
         raceEntry.PointsTotal = raceEntry.PointsForStationsAndLinesTotal + raceEntry.PointsForZones + raceEntry.PointsForGoodDeeds - raceEntry.PointsForPenaltiesNegative;

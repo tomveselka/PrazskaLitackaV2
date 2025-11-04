@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Logging;
 using PrazskaLitacka.Domain.Entities;
 using PrazskaLitacka.Domain.Interfaces;
+using PrazskaLitacka.Domain.Interfaces.ServiceInterfaces;
 using PrazskaLitacka.Webapi.Handlers;
-using PrazskaLitacka.Webapi.Interfaces;
 using static PrazskaLitacka.Webapi.Requests.RaceEntryRequests;
 
 

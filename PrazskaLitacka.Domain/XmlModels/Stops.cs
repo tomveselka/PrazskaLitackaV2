@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace PidStops.Models
+namespace PrazskaLitacka.Domain.PidStops.Models
 {
     [XmlRoot("stops")]
     public class Stops
