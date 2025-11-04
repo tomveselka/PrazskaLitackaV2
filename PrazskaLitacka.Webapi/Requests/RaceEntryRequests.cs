@@ -5,5 +5,5 @@ namespace PrazskaLitacka.Webapi.Requests;
 
 public class RaceEntryRequests
 {
-    public record EvaluateRaceEntry(RaceEntry entry) : IRequest<RaceEntry>;
+    public record EvaluateRaceEntryCommand(RaceEntry entry) : IRequest<RaceEntry>;
 }

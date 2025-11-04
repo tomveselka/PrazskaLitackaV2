@@ -7,7 +7,7 @@ using static PrazskaLitacka.Webapi.Requests.StationRequests;
 
 namespace PrazskaLitacka.Webapi.Handlers;
 
-public class GetAllStationsLatestHandler : IRequestHandler<GetAllStationsLatestHandlerQuery, List<Station>>
+public class GetAllStationsLatestHandler : IRequestHandler<GetAllStationsLatestQuery, List<Station>>
 {
     private readonly ITechnicalVariablesRepository _variablesRepository;
     private readonly IStationRepository _stationRepository;
@@ -24,7 +24,7 @@ public class GetAllStationsLatestHandler : IRequestHandler<GetAllStationsLatestH
         _time = time;
     }
 
-    public async Task<List<Station>> Handle(GetAllStationsLatestHandlerQuery request, CancellationToken cancellationToken)
+    public async Task<List<Station>> Handle(GetAllStationsLatestQuery request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("STATION-LIST-REQUEST Received request for all stations");
         var techVariables = await _variablesRepository.GetAll();

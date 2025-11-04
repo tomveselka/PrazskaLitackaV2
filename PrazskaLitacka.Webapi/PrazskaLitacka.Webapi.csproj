@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\PrazskaLitacka.Domain\PrazskaLitacka.Domain.csproj" />
+		<ProjectReference Include="..\PrazskaLitacka.Infrastructure\PrazskaLitacka.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>
