@@ -8,6 +8,8 @@ using PrazskaLitacka.Domain.Entities;
 namespace PrazskaLitacka.Domain.Interfaces;
 public interface IUserRepository
 {
+    Task<User?> GetByEmail(string email);
+    Task<User?> GetById(int id);
     Task<User?> GetByLogin(string login);
     Task Add(User user);
     Task Update(User user);
