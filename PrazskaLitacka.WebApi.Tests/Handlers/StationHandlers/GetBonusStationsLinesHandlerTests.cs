@@ -8,7 +8,7 @@ using PrazskaLitacka.Webapi.Handlers.StationHandlers;
 using PrazskaLitacka.WebApi.Tests.Extensions;
 using static PrazskaLitacka.Webapi.Requests.StationRequests;
 
-namespace PrazskaLitacka.WebApi.Tests.Handlers;
+namespace PrazskaLitacka.WebApi.Tests.Handlers.StationHandlers;
 public class GetBonusStationsLinesHandlerTests
 {
     private readonly GetBonusStationsLinesHandler _sut;

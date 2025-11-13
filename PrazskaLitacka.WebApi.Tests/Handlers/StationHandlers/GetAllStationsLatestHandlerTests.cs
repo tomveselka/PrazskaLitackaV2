@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static PrazskaLitacka.Webapi.Requests.StationRequests;
 
-namespace PrazskaLitacka.WebApi.Tests.Handlers;
+namespace PrazskaLitacka.WebApi.Tests.Handlers.StationHandlers;
 public class GetAllStationsLatestHandlerTests
 {
     private readonly GetAllStationsLatestHandler _sut;

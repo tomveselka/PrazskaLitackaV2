@@ -21,7 +21,7 @@ public static class MoqLoggerExtensions
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((v, t) =>
                     v.ToString().StartsWith(startsWith)),
-                null, // ignore exception
+                null,
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()
             ),
             times
