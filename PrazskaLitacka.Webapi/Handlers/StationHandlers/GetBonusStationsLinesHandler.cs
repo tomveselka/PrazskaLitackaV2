@@ -4,7 +4,7 @@ using PrazskaLitacka.Domain.Interfaces;
 using PrazskaLitacka.Webapi.Dto;
 using static PrazskaLitacka.Webapi.Requests.StationRequests;
 
-namespace PrazskaLitacka.Webapi.Handlers;
+namespace PrazskaLitacka.Webapi.Handlers.StationHandlers;
 
 public class GetBonusStationsLinesHandler : IRequestHandler<GetBonusStationsLinesQuery, BonusesDto>
 {

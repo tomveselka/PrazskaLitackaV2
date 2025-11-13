@@ -30,4 +30,11 @@ public class StationController : ControllerBase
         var result = await _mediator.Send(new GetAllStationsLatestQuery(enforceUpdate));
         return Ok(result);
     }
+
+    [HttpGet("GetStationsAutocomplete")]
+    public async Task<IActionResult> GetStationsAutocomplete([FromQuery] string nameStart, [FromQuery] int page, [FromQuery] int recordsPerPage)
+    {
+        var result = await _mediator.Send(new GetStationsAutocompleteQuery(nameStart, page, recordsPerPage));
+        return Ok(result);
+    }
 }

@@ -4,7 +4,7 @@ using Moq;
 using PrazskaLitacka.Domain.Entities;
 using PrazskaLitacka.Domain.Enums;
 using PrazskaLitacka.Domain.Interfaces;
-using PrazskaLitacka.Webapi.Handlers;
+using PrazskaLitacka.Webapi.Handlers.StationHandlers;
 using PrazskaLitacka.WebApi.Tests.Extensions;
 using static PrazskaLitacka.Webapi.Requests.StationRequests;
 

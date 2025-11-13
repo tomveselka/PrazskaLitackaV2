@@ -5,7 +5,7 @@ using PrazskaLitacka.Domain.Interfaces.ServiceInterfaces;
 using PrazskaLitacka.Webapi.Dto;
 using static PrazskaLitacka.Webapi.Requests.StationRequests;
 
-namespace PrazskaLitacka.Webapi.Handlers;
+namespace PrazskaLitacka.Webapi.Handlers.StationHandlers;
 
 public class GetAllStationsLatestHandler : IRequestHandler<GetAllStationsLatestQuery, List<Station>>
 {

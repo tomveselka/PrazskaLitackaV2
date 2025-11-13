@@ -5,7 +5,7 @@ using PrazskaLitacka.Domain.Entities;
 using PrazskaLitacka.Domain.Interfaces;
 using PrazskaLitacka.Domain.Interfaces.ServiceInterfaces;
 using PrazskaLitacka.Domain.PidStops.Models;
-using PrazskaLitacka.Webapi.Handlers;
+using PrazskaLitacka.Webapi.Handlers.StationHandlers;
 using PrazskaLitacka.WebApi.Tests.Extensions;
 using System;
 using System.Collections.Generic;

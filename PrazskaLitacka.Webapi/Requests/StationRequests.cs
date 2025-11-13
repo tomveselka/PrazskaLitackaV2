@@ -8,4 +8,5 @@ public class StationRequests
 {
     public record GetBonusStationsLinesQuery(int raceId) : IRequest<BonusesDto>;
     public record GetAllStationsLatestQuery(bool enforceUpdate) :IRequest<List<Station>>;
+    public record GetStationsAutocompleteQuery(string nameStart, int page, int recordsPerPage) : IRequest<List<Station>>;
 }
