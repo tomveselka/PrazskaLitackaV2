@@ -73,6 +73,9 @@ public class GetStationsAutocompleteHandlerTests
            "STATION-AUTOCOMPLETE-RETURN Returning list of 2 stations",
            Times.Once()
        );
+
+        _stationRepositoryMock
+             .Verify(s => s.GetByBeginningOfName(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()), Times.Once);
     }
 
 

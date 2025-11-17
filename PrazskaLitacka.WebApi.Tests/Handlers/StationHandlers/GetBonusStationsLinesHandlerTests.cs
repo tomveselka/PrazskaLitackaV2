@@ -70,6 +70,9 @@ public class GetBonusStationsLinesHandlerTests
            "BONUS-LIST-TOO-EARLY",
            Times.Once()
        );
+
+        _raceRepositoryMock
+            .Verify(r => r.GetById(It.IsAny<int>()), Times.Once());
     }
 
     [Fact]
@@ -139,5 +142,12 @@ public class GetBonusStationsLinesHandlerTests
             "BONUS-LIST-RETRIEVED",
             Times.Once()
         );
+
+        _raceRepositoryMock
+            .Verify(r => r.GetById(It.IsAny<int>()), Times.Once);
+        _lineRepositoryMock
+            .Verify(r => r.GetAllForRace(It.IsAny<int>()), Times.Once);
+        _stationRepositoryMock
+            .Verify(r => r.GetAllForRace(It.IsAny<int>()), Times.Once);
     }
 }
