@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PrazskaLitacka.Domain.Dto;
 using PrazskaLitacka.Domain.Exceptions;
 using static PrazskaLitacka.Webapi.Requests.UserRequests;
 
@@ -32,5 +33,16 @@ public class UserController : ControllerBase
         {
             return StatusCode(500, new { error = "Unexpected error occurred" });
         }
+    }
+
+    [HttpPost("Register")]
+    public async Task<IActionResult> Register([FromBody] RegisterUserRequestDto userDto)
+    {
+        var registeredUser = await _mediator.Send(new RegisterUserCommand(userDto)); 
+        if(registeredUser.Result.Equals("already_exists", StringComparison.OrdinalIgnoreCase))
+        {
+            return Conflict(new { error = "UserAlreadyExists", message = "A user with this email already exists." });
+        }
+        return Ok(registeredUser);
     }
 }

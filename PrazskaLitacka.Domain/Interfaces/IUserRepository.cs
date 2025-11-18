@@ -11,6 +11,6 @@ public interface IUserRepository
     Task<User?> GetByEmail(string email);
     Task<User?> GetById(int id);
     Task<User?> GetByLogin(string login);
-    Task Add(User user);
+    Task<User> Add(User user);
     Task Update(User user);
 }

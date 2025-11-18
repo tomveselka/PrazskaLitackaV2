@@ -27,7 +27,7 @@ public class StationController : ControllerBase
     [HttpGet("GetAllStationsLatest")]
     public async Task<IActionResult> GetAllStationsLatest([FromQuery] bool enforceUpdate)
     {
-        var result = await _mediator.Send(new GetAllStationsLatestQuery(enforceUpdate));
+        var result = await _mediator.Send(new GetAllStationsLatestCommand(enforceUpdate));
         return Ok(result);
     }
 

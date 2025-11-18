@@ -1,5 +1,8 @@
-using PrazskaLitacka.Infrastructure.Services.Impl;
+using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using PrazskaLitacka.Domain.Interfaces.ServiceInterfaces;
+using PrazskaLitacka.Infrastructure.Services.Impl;
+using PrazskaLitacka.Webapi.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IGetPidDataService, GetPidDataService>();
 builder.Services.AddTransient<IRaceEvaluationService, RaceEvaluationService>();
+
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<MappingProfile>();
+});
 
 builder.Services.AddHttpClient("XmlDataClient", client =>
 {

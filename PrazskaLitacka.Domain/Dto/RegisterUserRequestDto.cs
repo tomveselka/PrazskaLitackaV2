@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace PrazskaLitacka.Domain.Dto;
-public class RegisterUserDto
+public class RegisterUserRequestDto
 {
     public required string Name { get; set; }
     public required string Login { get; set; }

@@ -7,6 +7,6 @@ namespace PrazskaLitacka.Webapi.Requests;
 public class UserRequests
 {
     public record GetUserByIdQuery(int userId) : IRequest<User>;
-    public record ResetPasswordQuery(string email)  : IRequest<Result>;
-    public record RegisterUserQuery(RegisterUserDto dto) : IRequest<User>;
+    public record ResetPasswordCommand(string email)  : IRequest<Result>;
+    public record RegisterUserCommand(RegisterUserRequestDto dto) : IRequest<RegisterUserResponseDto>;
 }

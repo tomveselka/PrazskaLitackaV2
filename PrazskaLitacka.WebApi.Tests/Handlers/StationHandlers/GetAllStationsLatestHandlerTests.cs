@@ -52,7 +52,7 @@ public class GetAllStationsLatestHandlerTests
     public async Task Handle_ReturnListDontUpdate_WhenTooEarlySinceLastUpdate()
     {
         //Arrange
-        var query = new GetAllStationsLatestQuery(false);
+        var query = new GetAllStationsLatestCommand(false);
         _variablesRepositoryMock
             .Setup(x => x.GetAll())
             .ReturnsAsync(new TechnicalVariables()
@@ -89,7 +89,7 @@ public class GetAllStationsLatestHandlerTests
     public async Task Handle_ReturnListUpdate_WhenEnoughTimeSinceLastUpdate()
     {
         //Arrange
-        var query = new GetAllStationsLatestQuery(false);
+        var query = new GetAllStationsLatestCommand(false);
         _variablesRepositoryMock
             .Setup(x => x.GetAll())
             .ReturnsAsync(new TechnicalVariables()
@@ -138,7 +138,7 @@ public class GetAllStationsLatestHandlerTests
     public async Task Handle_ReturnListDontUpdate_WhenUpdateFails()
     {
         //Arrange
-        var query = new GetAllStationsLatestQuery(false);
+        var query = new GetAllStationsLatestCommand(false);
         _variablesRepositoryMock
             .Setup(x => x.GetAll())
             .ReturnsAsync(new TechnicalVariables()
