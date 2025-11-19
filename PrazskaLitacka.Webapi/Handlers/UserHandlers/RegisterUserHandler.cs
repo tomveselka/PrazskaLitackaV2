@@ -48,6 +48,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Register
         try
         {
             var registerUser = await _userRepository.Add(userForRegistration);
+            //TODO
             var registrationEmailDto = new SendRegistrationEmailDto()
             {
 
