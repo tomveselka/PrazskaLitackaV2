@@ -33,9 +33,11 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Register
 
     public async Task<RegisterUserResponseDto> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("REGISTER-USER-START Began registering user with email {0}.", request.dto.Email);
         var existingUser = await _userRepository.GetByEmail(request.dto.Email);
         if (existingUser != null) 
         {
+            _logger.LogInformation("REGISTER-USER-EXISTS Email {0} already exists in database.", request.dto.Email);
             return new RegisterUserResponseDto
             {
                 Result = "already_exists"
@@ -62,6 +64,8 @@ public class RegisterUserHandler : IRequestHandler<RegisterUserCommand, Register
         catch (Exception ex) 
         {
             await transaction.RollbackAsync();
+
+            _logger.LogError("REGISTER-USER-ERROR Registering user {0} failed with exeption  message {1} trace {2}", request.dto.Email, ex.Message, ex.StackTrace);
 
             return new RegisterUserResponseDto
             {

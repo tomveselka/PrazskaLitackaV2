@@ -13,15 +13,15 @@ public class RaceController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-public RaceController(IMediator mediator)
-{
-    _mediator = mediator;
-}
+    public RaceController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
 
-[HttpPost("EvaluateRaceEntry")]
-public async Task<IActionResult> EvaluateRaceEntry([FromBody] RaceEntry entry)
-{
-    var evaluatedEntry = await _mediator.Send(new EvaluateRaceEntryCommand(entry));
-    return Ok(evaluatedEntry);
-}
+    [HttpPost("EvaluateRaceEntry")]
+    public async Task<IActionResult> EvaluateRaceEntry([FromBody] RaceEntry entry)
+    {
+        var evaluatedEntry = await _mediator.Send(new EvaluateRaceEntryCommand(entry));
+        return Ok(evaluatedEntry);
+    }
 }

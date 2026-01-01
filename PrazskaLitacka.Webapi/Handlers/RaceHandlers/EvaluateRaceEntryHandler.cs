@@ -7,7 +7,7 @@ using PrazskaLitacka.Webapi.Handlers;
 using static PrazskaLitacka.Webapi.Requests.RaceEntryRequests;
 
 
-namespace PrazskaLitacka.WebApi.Handlers;
+namespace PrazskaLitacka.Webapi.Handlers.RaceHandlers;
 public class EvaluateRaceEntryHandler : IRequestHandler<EvaluateRaceEntryCommand, RaceEntry>
 {
     private readonly ILogger<EvaluateRaceEntryHandler> _logger;
